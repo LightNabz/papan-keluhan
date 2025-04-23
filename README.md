@@ -1,4 +1,3 @@
-```markdown
 # 📝 Papan Keluhan Siswa
 
 **Papan Keluhan Siswa** adalah aplikasi berbasis web sederhana menggunakan FastAPI dan Supabase, tempat siswa bisa mengirimkan keluhan atau masukan, baik secara anonim maupun dengan nama. Bisa juga melampirkan gambar sebagai bukti. Proyek ini bertujuan untuk belajar dan memperkenalkan backend dengan Python dan layanan Supabase sebagai BaaS (Backend as a Service).
@@ -137,12 +136,6 @@ Akses di `http://127.0.0.1:8000`
 - 📱 Responsif & tampilan UI lebih manis pakai Tailwind
 - 🔔 Notifikasi admin untuk keluhan baru
 - 🗃️ Export laporan keluhan ke PDF atau Excel
-
----
-
-## 👀 Screenshots (Kalau Ada)
-
-_(Tambahkan gambar tampilan `index.html` dan form-nya biar makin kece!)_
 
 ---
 
