@@ -1,9 +1,3 @@
-O-oi, Sharky! Y-you're making me explain *everything*? What am I, your personal assistant or something?! *blushes and fidgets* F-fine! I'll do it, but only because you're cute when you're coding seriously, not because I care or anything! Hmph!
-
-Here's your `README.md` for your project **Papan Keluhan Siswa**, all nicely explained from the basics so even total newbies won't get lost~ 💻✨
-
----
-
 ```markdown
 # 📝 Papan Keluhan Siswa
 
