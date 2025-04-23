@@ -1,25 +1,25 @@
 # 📝 Papan Keluhan Siswa
 
-**Papan Keluhan Siswa** adalah aplikasi berbasis web sederhana menggunakan FastAPI dan Supabase, tempat siswa bisa mengirimkan keluhan atau masukan, baik secara anonim maupun dengan nama. Bisa juga melampirkan gambar sebagai bukti. Proyek ini bertujuan untuk belajar dan memperkenalkan backend dengan Python dan layanan Supabase sebagai BaaS (Backend as a Service).
+**Papan Keluhan Siswa** adalah sebuah aplikasi berbasis web sederhana yang dikembangkan menggunakan FastAPI dan Supabase. Aplikasi ini dirancang sebagai platform bagi siswa untuk menyampaikan keluhan atau masukan, baik secara anonim maupun dengan mencantumkan nama. Selain itu, aplikasi ini juga memungkinkan pengguna untuk melampirkan gambar sebagai bukti pendukung. Proyek ini bertujuan untuk memberikan pengalaman belajar dalam pengembangan backend menggunakan Python serta memanfaatkan Supabase sebagai layanan Backend as a Service (BaaS).
 
 ---
 
 ## 🚀 Fitur
 
-- Form pengaduan siswa (dengan opsi nama dan upload gambar)
-- Menyimpan data di Supabase
-- Melihat daftar keluhan terbaru di halaman utama
-- Upload file ke Supabase Storage
+- Formulir pengaduan siswa dengan opsi untuk mencantumkan nama dan mengunggah gambar.
+- Penyimpanan data keluhan di Supabase.
+- Tampilan daftar keluhan terbaru di halaman utama.
+- Fasilitas unggah file ke Supabase Storage.
 
 ---
 
 ## 🛠️ Teknologi
 
-- [FastAPI](https://fastapi.tiangolo.com/) - Backend Web Framework
-- [Jinja2](https://jinja.palletsprojects.com/) - Template engine untuk HTML
-- [httpx](https://www.python-httpx.org/) - Async HTTP client
-- [Supabase](https://supabase.com/) - Backend as a Service
-- [dotenv](https://pypi.org/project/python-dotenv/) - Untuk mengelola environment variables
+- [FastAPI](https://fastapi.tiangolo.com/) - Framework untuk pengembangan backend berbasis web.
+- [Jinja2](https://jinja.palletsprojects.com/) - Template engine untuk menghasilkan halaman HTML dinamis.
+- [httpx](https://www.python-httpx.org/) - Klien HTTP asinkron untuk komunikasi dengan API eksternal.
+- [Supabase](https://supabase.com/) - Layanan Backend as a Service (BaaS).
+- [dotenv](https://pypi.org/project/python-dotenv/) - Library untuk mengelola variabel lingkungan (environment variables).
 
 ---
 
@@ -28,12 +28,12 @@
 ```
 papan-keluhan-siswa/
 │
-├── main.py                # File utama FastAPI
-├── .env                   # File environment variables (SUPABASE_URL, KEY, dll)
+├── main.py                # File utama aplikasi FastAPI
+├── .env                   # File untuk menyimpan variabel lingkungan (SUPABASE_URL, KEY, dll.)
 ├── static/
 │   ├── index.html         # Template halaman utama
-│   └── ...                # CSS, gambar, dll.
-└── README.md              # Dokumentasi ini
+│   └── ...                # File CSS, gambar, dan aset lainnya
+└── README.md              # Dokumentasi proyek
 ```
 
 ---
@@ -44,32 +44,35 @@ papan-keluhan-siswa/
 ```python
 app = FastAPI()
 ```
-Ini bikin instance aplikasi FastAPI kita, duh.
+Kode ini membuat sebuah instance dari aplikasi FastAPI yang akan digunakan untuk mendefinisikan endpoint dan menjalankan server.
 
 ```python
 BASE_DIR = Path(__file__).resolve().parent
 ```
-Biar tahu direktori kerja aplikasi sekarang (buat nyari file `static`/template).
+Kode ini menentukan direktori kerja aplikasi saat ini. Variabel `BASE_DIR` digunakan untuk memastikan bahwa aplikasi dapat menemukan file statis dan template HTML dengan benar.
 
 ```python
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 templates = Jinja2Templates(directory=str(templates_dir))
 ```
-Ini buat handle file statis dan template HTML.
+- `app.mount` digunakan untuk mengatur direktori file statis agar dapat diakses melalui URL. Misalnya, file CSS atau gambar.
+- `Jinja2Templates` digunakan untuk menghubungkan aplikasi dengan template HTML yang akan dirender.
 
 ```python
 load_dotenv()
 ```
-Ngambil variabel dari file `.env`, kayak `SUPABASE_URL` dan `SUPABASE_KEY`.
+Fungsi ini memuat variabel lingkungan dari file `.env`. Variabel ini biasanya berisi informasi sensitif seperti URL dan kunci API Supabase.
 
-### Supabase Config
+### Konfigurasi Supabase
 
 ```python
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 SUPABASE_BUCKET = os.getenv("SUPABASE_BUCKET", "note-uploads")
 ```
-Ngambil info Supabase dari environment. Bucket ini tempat upload file gambar.
+- `SUPABASE_URL` adalah URL proyek Supabase Anda.
+- `SUPABASE_KEY` adalah kunci API untuk mengakses layanan Supabase.
+- `SUPABASE_BUCKET` adalah nama bucket di Supabase Storage tempat file gambar akan diunggah. Jika tidak ditentukan, nilai default adalah `note-uploads`.
 
 ---
 
@@ -79,34 +82,34 @@ Ngambil info Supabase dari environment. Bucket ini tempat upload file gambar.
 ```python
 @app.get("/notes")
 ```
-Ambil semua catatan dari tabel `notes` di Supabase dan tampilkan sebagai JSON.
+Endpoint ini digunakan untuk mengambil semua catatan dari tabel `notes` di Supabase. Data akan dikembalikan dalam format JSON.
 
 #### GET `/`
 ```python
 @app.get("/", response_class=HTMLResponse)
 ```
-Render halaman utama (`index.html`) dan ambil data notes terbaru.
+Endpoint ini merender halaman utama (`index.html`) dan menampilkan daftar keluhan terbaru yang diambil dari database.
 
 #### POST `/submit`
 ```python
 @app.post("/submit")
 ```
-Handle form kiriman dari pengguna:
-- Simpan judul, isi, nama, dan gambar (kalau ada) ke Supabase
-- Upload gambar ke storage Supabase
-- Kalo sukses, redirect ke `/`
+Endpoint ini menangani pengiriman formulir dari pengguna. Proses yang dilakukan meliputi:
+- Menyimpan data seperti judul, isi, nama, dan gambar (jika ada) ke tabel `notes` di Supabase.
+- Mengunggah file gambar ke Supabase Storage.
+- Jika berhasil, pengguna akan diarahkan kembali ke halaman utama (`/`).
 
 ---
 
 ## 🔧 Cara Menjalankan Proyek
 
-1. **Clone Repo-nya**
+1. **Clone Repositori**
 ```bash
 git clone https://github.com/kamu/papan-keluhan-siswa.git
 cd papan-keluhan-siswa
 ```
 
-2. **Buat Virtual Env & Install Dependency**
+2. **Buat Virtual Environment & Install Dependency**
 ```bash
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
@@ -124,21 +127,21 @@ SUPABASE_BUCKET=note-uploads
 ```bash
 uvicorn main:app --reload
 ```
-Akses di `http://127.0.0.1:8000`
+Akses aplikasi di `http://127.0.0.1:8000`.
 
 ---
 
 ## ✨ Pengembangan Selanjutnya
 
-- 💬 Sistem komentar untuk tiap keluhan
-- 🧾 Validasi input yang lebih baik
-- 🛡️ Autentikasi siswa (biar gak spam!)
-- 📱 Responsif & tampilan UI lebih manis pakai Tailwind
-- 🔔 Notifikasi admin untuk keluhan baru
-- 🗃️ Export laporan keluhan ke PDF atau Excel
+- 💬 Menambahkan sistem komentar untuk setiap keluhan.
+- 🧾 Validasi input yang lebih ketat.
+- 🛡️ Menyediakan autentikasi siswa untuk mencegah spam.
+- 📱 Membuat tampilan UI lebih responsif dan menarik menggunakan Tailwind CSS.
+- 🔔 Menambahkan notifikasi untuk admin saat ada keluhan baru.
+- 🗃️ Menyediakan fitur ekspor laporan keluhan ke format PDF atau Excel.
 
 ---
 
 ## 📄 Lisensi
 
-MIT License. Silakan forking dan pakai buat belajar atau proyek sejenis~
+Proyek ini dilisensikan di bawah MIT License. Anda bebas untuk melakukan forking dan menggunakan proyek ini untuk keperluan belajar atau pengembangan proyek serupa.
