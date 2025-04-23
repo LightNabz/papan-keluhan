@@ -1,0 +1,60 @@
+.background-container {
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  #toggle-theme {
+    background-color: #F5C2E7;
+    color: #1E1A1A;
+    transition: all 0.3s ease;
+    width: 32px; /* Fixed size */
+    height: 32px; /* Fixed size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateZ(0); /* Prevent layout shifts */
+}
+
+#toggle-theme:hover {
+    background-color: #DDB6F2;
+    transform: scale(1.1) translateZ(0);
+}
+
+#toggle-theme svg {
+    width: 18px;
+    height: 18px;
+}
+
+.dark #toggle-theme {
+    background-color: #89B4FA;
+    color: #1E1E2E;
+}
+
+.dark #toggle-theme:hover {
+    background-color: #74C7EC;
+}
+
+/* Moon animation */
+@keyframes moon-glow {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Sun animation */
+@keyframes sun-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(180deg); }
+}
+
+nav ul {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+nav li {
+  display: flex;
+  align-items: center;
+}
