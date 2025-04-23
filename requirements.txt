@@ -1,4 +1,5 @@
 fastapi
+python-multipart
 httpx
 python-dotenv
 jinja2
