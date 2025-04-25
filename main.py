@@ -224,7 +224,7 @@ async def download_data(credentials: HTTPBasicCredentials = Depends(verify_admin
             'font_size': 11,
             'border': 1,
             'align': 'left',
-            'valign': 'vcenter',
+            'valign': 'top',
             'text_wrap': True
         })
         
@@ -233,12 +233,12 @@ async def download_data(credentials: HTTPBasicCredentials = Depends(verify_admin
         
         # Set column widths with updated sizes
         worksheet.set_column('A:A', 10)  # No. (shortened from 36)
-        worksheet.set_column('B:B', 12)  # Tanggal (shortened from 20)
-        worksheet.set_column('C:C', 30)  # Judul (kept same)
-        worksheet.set_column('D:D', 50)  # Isi Keluhan (kept same)
-        worksheet.set_column('E:E', 15)  # Nama (shortened from 20)
-        worksheet.set_column('F:F', 25)  # Gambar (shortened from 40)
-
+        worksheet.set_column('B:B', 15)  # Judul
+        worksheet.set_column('C:C', 50)  # Isi Keluhan
+        worksheet.set_column('D:D', 20)  # Nama
+        worksheet.set_column('E:E', 15)  # Gambar
+        worksheet.set_column('F:F', 20)  # Jenis Keluhan
+        worksheet.set_column('F:F', 15)  # Tanggal
         # Apply cell format to data rows starting from row 2
         for row in range(len(df)):
             for col in range(len(df.columns)):

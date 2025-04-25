@@ -52,7 +52,7 @@
                 {% for note in notes %}
                 <div class="note box">
                     <div class="note-header">
-                        <p class="note-author">{{ note.name or "Anon" }}</p>
+                        <p class="note-author">Oleh: {{ note.name or "Anon" }}</p>
                         <h3 class="note-title">{{ note.title }}</h3>
                     </div>
                     <div class="note-body">
@@ -62,6 +62,7 @@
                             <img src="{{ note.image_url }}" alt="No image attached">
                         </div>
                         {% endif %}
+                        <p class="note-category">{{ note.jenis_keluhan }}</p>
                     </div>
                     <div class="note-actions">
                         <button class="btn-transparent delete-btn" data-note-id="{{ note.id }}" data-image-url="{{ note.image_url }}">

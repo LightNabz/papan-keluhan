@@ -128,7 +128,7 @@ a:hover {
 .hamburger div {
     width: 25px;
     height: 3px;
-    background: #fff;
+    background: #4c4f69;
     margin: 4px 0;
     transition: all 0.3s ease;
 }
@@ -188,10 +188,12 @@ a:hover {
     padding: 1rem;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     width: 600px; /* Limit the width of the note box */
+    height: auto;
     margin: 0 auto; /* Center the note box */
     gap: 1.5rem;
     position: relative; /* Ensure positioning context for child elements */
     text-align: left; /* Align content to the left */
+    overflow: hidden;
 }
 
 .note:hover {
@@ -199,6 +201,7 @@ a:hover {
     box-shadow: 
         15px 15px 30px #7c7f93,
         -15px -15px 30px #7c7f93;
+    overflow: hidden;
 }
 
 .note img {
@@ -213,8 +216,13 @@ a:hover {
     left: 10px; /* Adjust the distance from the left */
     gap: 0.5rem;
     margin: 0; /* Remove default margin */
-    font-size: 0.9rem; /* Optional: Adjust font size */
-    color: #4c4f69; /* Optional: Ensure visibility */
+    font-size: 0.7rem; /* Optional: Adjust font size */
+    color: #6c6f85; /* Optional: Ensure visibility */
+}
+
+.note-category {
+    font-size: 0.7rem; /* Optional: Adjust font size */
+    color: #6c6f85; /* Optional: Ensure visibility */
 }
 
 .modal {
@@ -397,7 +405,7 @@ textarea {
         right: -100%;
         height: 100vh;
         width: 60%;
-        background-color: #1E1E2E;
+        background-color: #e6e9ef;
         flex-direction: column;
         justify-content: center;
         align-items: center;
@@ -441,6 +449,7 @@ textarea {
     }
 
     input[type="text"], textarea {
+        resize: none;
         width: auto;
     }
 
