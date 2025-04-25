@@ -59,17 +59,13 @@ let isDark = localStorage.getItem('theme') === 'dark' || !localStorage.getItem('
 // Your existing theme logic
 function applyTheme() {
   if (isDark) {
-    themeLink.href = 'assets/css/style.css';
+    themeLink.href = '/static/css/style.css';
     containers.forEach(container => {
-      container.classList.remove('bg-[#f1f1f1]', 'bg-[#f2f2f2]');
-      container.classList.add('bg-[#181825]', 'bg-[#1E1E2E]');
+
     });
   } else {
-    themeLink.href = 'assets/css/stylel.css';
-    containers.forEach(container => {
-      container.classList.remove('bg-[#181825]', 'bg-[#1E1E2E]');
-      container.classList.add('bg-[#f1f1f1]', 'bg-[#f2f2f2]');
-    });
+    themeLink.href = '/static/css/style-light.css';
+
   }
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
 }

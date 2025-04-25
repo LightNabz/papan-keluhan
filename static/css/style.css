@@ -1,33 +1,31 @@
-/* RESET */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-.text {
-    --tw-text-opacity: 1;
-    color: rgb(209 213 219 / var(--tw-text-opacity, 1));
-}
-
-/* BODY */
 body {
-    font-family: 'Fira Code', monospace;
-    background: #11111B;
-    color: #E0D8D1;
+    margin: 0;
+    font-family: 'Fira Code', monospace; /* Updated font */
+    background: #11111B; /* Dark background */
+    color: #E0D8D1; /* Light text color */
     line-height: 1.6;
     scroll-behavior: smooth;
     overflow-x: hidden;
 }
 
-/* LINKS */
-a {
-    color: #E0D8D1;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-a:hover {
+.hero {
+    background-size: 50px 50px;
+    background-image: 
+        repeating-linear-gradient(0deg, rgba(137, 180, 250, 0.1) 0px, rgba(137, 180, 250, 0.1) 1px, transparent 1px, transparent 50px), 
+        repeating-linear-gradient(90deg, rgba(137, 180, 250, 0.1) 0px, rgba(137, 180, 250, 0.1) 1px, transparent 1px, transparent 50px);
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-size: 100% 100%;
+        mask-size: 100% 100%;
+    padding: 2rem;
     color: #F5C2E7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    text-align: center;
+    gap: 1.5rem;
 }
 
 /* NAVBAR */
@@ -50,6 +48,15 @@ nav.scrolled {
 
 nav > * {
     flex: 0 0 auto;
+}
+
+a {
+    color: #E0D8D1;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+a:hover {
+    color: #F5C2E7;
 }
 
 .logo {
@@ -99,71 +106,16 @@ nav > * {
     transition: all 0.3s ease;
 }
 
-/* HERO SECTION */
-.hero {
-    background-size: 50px 50px;
-    background-image: 
-        repeating-linear-gradient(0deg, rgba(137, 180, 250, 0.1) 0px, rgba(137, 180, 250, 0.1) 1px, transparent 1px, transparent 50px), 
-        repeating-linear-gradient(90deg, rgba(137, 180, 250, 0.1) 0px, rgba(137, 180, 250, 0.1) 1px, transparent 1px, transparent 50px);
-        -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
-        mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-        -webkit-mask-size: 100% 100%;
-        mask-size: 100% 100%;
-    padding: 2rem;
-    color: #F5C2E7;
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    text-align: center;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
-.hero::before {
-    content: "";
-    position: absolute;
-    pointer-events: none;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(137, 180, 250, 0.5) 0%, transparent 70%);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    z-index: 1;
-  }
-
-.spotlight {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(137, 180, 250, 0.15) 0%, transparent 80%);
-    pointer-events: none;
-    border-radius: 50%;
-    transform: translate(-50%, -20%);
-    transition: opacity 0.3s ease;
-    opacity: 0;
-    mix-blend-mode: overlay; /* ganti ini */
-    filter: blur(20px); /* bikin glow lebih smooth */
-    z-index: 1; /* jangan di atas semua biar nggak norak */
-  }
-  
-.hero h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    font-weight: bold;
-}
-.hero p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    color: #F1F1F1;
-}
-
-/* BUTTON */
-.btn-transparent {
+button {
     border: 2px solid #F5C2E7;
     padding: 0.5rem 1rem;
     border-radius: 10px;
@@ -172,50 +124,86 @@ nav > * {
     background-color: transparent;
     transition: all 0.3s ease;
 }
-.btn-transparent:hover {
-    background-color: #F5C2E7;
+
+button:hover {
+    background-color: #E0D8D1; /* Slightly lighter hover effect */
     color: #1E1A1A;
+    transform: translateY(-2px); /* Subtle hover animation */
 }
 
-/* SECTION */
-section {
+.note-list {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    width: 100%;
-    min-height: 100vh;
-    padding: 2rem;
+    gap: 1rem;
 }
 
-/* HEADINGS */
-h2 {
-    font-size: 2.2rem;
-    margin-bottom: 1.5rem;
-    color: #F5C2E7;
-}
-
-/* kotak kotakk */
-.box {
-    background: #1E1E2E;
+/* Update the .note class */
+.note {
+    background: #181926; /* Darker box background */
     border-radius: 20px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 
-        10px 10px 20px #0d0d13,
-        -10px -10px 20px #29293b;
+    border: 1px solid #b7bdf8;
+    padding: 1rem;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    max-width: 100%;
+    width: 600px; /* Limit the width of the note box */
+    margin: 0 auto; /* Center the note box */
+    gap: 1.5rem;
+    position: relative; /* Ensure positioning context for child elements */
+    text-align: left; /* Align content to the left */
 }
-.box:hover {
+
+.note:hover {
     transform: translateY(-5px);
     box-shadow: 
         15px 15px 30px #0d0d13,
         -15px -15px 30px #29293b;
 }
 
-/* FOOTER */
+.note img {
+    max-width: 100%;
+    margin-top: 1rem;
+    border-radius: 0.375rem;
+}
+
+.note-author {
+    position: absolute; /* Position it relative to the .note box */
+    top: 10px; /* Adjust the distance from the top */
+    left: 10px; /* Adjust the distance from the left */
+    gap: 0.5rem;
+    margin: 0; /* Remove default margin */
+    font-size: 0.9rem; /* Optional: Adjust font size */
+    color: #F5C2E7; /* Optional: Ensure visibility */
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(17, 17, 27, 0.95); /* Darker modal background */
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Consistent shadow */
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none; /* Ensure it's hidden when the class is applied */
+}
+
+.modal-content {
+    padding: 2rem;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    color: #E0D8D1; /* Light text color */
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
 footer {
     background-color: #11111B;
     padding: 2rem;
@@ -228,61 +216,102 @@ footer a {
     text-decoration: underline;
 }
 
-/* SECTION COLORS */
-#about { background: #181825; }
-#projects { background: #11111b; }
-#contact { background: #181825; }
+.drag-drop-area {
+    border: 2px dashed #F5C2E7;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    color: #E0D8D1;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
-/* BACKGROUND DECOR (Penat wak)*/
-.background {
-    position: fixed;
-    width: 100%;
-    height: 100%;
+.drag-drop-area:hover {
+    background-color: rgba(245, 194, 231, 0.1);
+}
+
+.drag-drop-area.drag-over {
+    background-color: rgba(245, 194, 231, 0.2);
+}
+
+input[type="text"], textarea {
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border: 2px solid #F5C2E7; /* Light border color */
+    border-radius: 10px;
+    background-color: #181926; /* Dark background */
+    color: #E0D8D1; /* Light text color */
+    font-size: 1rem;
+    font-family: 'Fira Code', monospace; /* Consistent font */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]::placeholder, textarea::placeholder {
+    color: #999; /* Subtle placeholder color */
+    font-style: italic;
+}
+
+input[type="text"]:hover, textarea:hover {
+    border-color: #B7BDF8; /* Slightly brighter border on hover */
+}
+
+input[type="text"]:focus, textarea:focus {
+    outline: none;
+    border-color: #b7bdf8; /* Highlight border on focus */
+    box-shadow: 0 0 5px #b7bdf8; /* Subtle glow effect */
+}
+
+textarea {
+    resize: none; /* Prevent resizing */
+    height: 100px; /* Set a consistent height */
+}
+
+.image-preview {
+    flex-shrink: 0;
+    max-width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+    border-radius: 10px;
     overflow: hidden;
-    z-index: -1;
-    top: 0;
-    left: 0;
+    border: 2px solid #F5C2E7;
+    background-color: #181926;
+    padding: 0.5rem;
 }
-.circle {
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.image-preview button {
     position: absolute;
-    width: 40px;
-    height: 40px;
-    background: rgba(250, 214, 165, 0.1);
-    border: 1px solid #F5C2E7;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
     border-radius: 50%;
-    animation: float 6s infinite ease-in-out;
-}
-@keyframes float {
-    0% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-40px) scale(1.1); }
-    100% { transform: translateY(0) scale(1); }
-}
-
-/* MODAL */
-.modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(17, 17, 27, 0.95);
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    display: none; /* Hidden by default */
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
 }
 
-.modal .hidden {
-    display: none; /* Ensure it's hidden when the class is applied */
+.image-preview button:hover {
+    background: rgba(0, 0, 0, 0.8);
 }
 
-.modal .box {
-    background: #1E1E2E;
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 
-        10px 10px 20px #0d0d13,
-        -10px -10px 20px #29293b;
+.hidden {
+    display: none;
 }
 
 @media screen and (max-width: 768px) {
@@ -294,7 +323,7 @@ footer a {
         display: none;
         position: fixed;
         top: 0;
-        right: -100%; /* awalnya ngumpet */
+        right: -100%;
         height: 100vh;
         width: 60%;
         background-color: #1E1E2E;
@@ -315,23 +344,36 @@ footer a {
         display: flex;
     }
 
-    .hero h1 {
-        font-size: 2rem;
+    .container {
+        padding: 0; /* Remove padding on mobile */
+        margin: 1rem auto; /* Keep vertical margin, auto horizontal */
+        width: 90%; /* Set container width */
     }
 
-    .hero p {
-        font-size: 1rem;
+    .note {
+        width: calc(100% - 2rem); /* Account for note padding */
+        margin: 0 auto; /* Center the note */
+        box-sizing: border-box; /* Include padding in width calculation */
     }
 
-    h2 {
-        font-size: 1.5rem;
+    .modal {
+        width: 90%;
+        max-width: none;
     }
 
-    section {
+    .modal-content {
         padding: 1rem;
     }
 
-    .box {
-        padding: 1rem;
+    .image-preview {
+        margin: 0.5rem 0;
+    }
+
+    input[type="text"], textarea {
+        width: auto;
+    }
+
+    .drag-drop-area {
+        margin: 0.5rem 0;
     }
 }

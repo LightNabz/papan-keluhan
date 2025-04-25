@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Papan Keluhan</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/global.css">
+    <link rel="stylesheet" href="/static/css/animations.css">
+    <link rel="stylesheet" href="/static/css/sambut.css">
+    <style>
+        .delete-btn:hover {
+            background-color: #d20f39;
+            color: #f1f1f1;
+            border: 2px solid #d20f39;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Admin Dashboard</div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <ul id="nav-links">
+            <li><a href="/admin">Dashboard</a></li>
+            <li><a href="/admin/download">Download Data</a></li>
+            <li><a href="/admin/logout">Logout</a></li>
+        </ul>
+    </nav>
+    
+    <div class="hero">
+        <div class="container">
+            <h1>Admin Dashboard</h1>
+            <div class="note-list">
+                {% for note in notes %}
+                <div class="note box">
+                    <div class="note-header">
+                        <p class="note-author">{{ note.name or "Anon" }}</p>
+                        <h3 class="note-title">{{ note.title }}</h3>
+                    </div>
+                    <div class="note-body">
+                        <p class="note-content">{{ note.content }}</p>
+                        {% if note.image_url %}
+                        <div class="note-image">
+                            <img src="{{ note.image_url }}" alt="Attached image for note">
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="note-actions">
+                        <button class="btn-transparent delete-btn" data-note-id="{{ note.id }}" data-image-url="{{ note.image_url }}">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Papan Keluhan Siswa | This is FOSS, feel free to use!</p>
+    </footer>
+    <script>
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                if (confirm('Are you sure you want to delete this note?')) {
+                    const noteId = button.dataset.noteId;
+                    
+                    try {
+                        const response = await fetch(`/admin/delete/${noteId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            button.closest('.note').remove();
+                        } else {
+                            const error = await response.json();
+                            alert(error.error || 'Failed to delete note');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Failed to delete note');
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
