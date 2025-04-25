@@ -9,7 +9,7 @@ html {
     display: inline-block;
   }
   
-  nav ul li a::after {
+  .dark nav ul li a::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -17,6 +17,18 @@ html {
     width: 0;
     height: 2px;
     background: rgb(245, 194, 231);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+  }
+
+  nav ul li a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: #ea76cb;
     transition: all 0.3s ease;
     transform: translateX(-50%);
   }

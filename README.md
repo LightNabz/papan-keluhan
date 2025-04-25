@@ -105,7 +105,7 @@ Endpoint ini menangani pengiriman formulir dari pengguna. Proses yang dilakukan 
 
 1. **Clone Repositori**
 ```bash
-git clone https://github.com/kamu/papan-keluhan-siswa.git
+git clone https://github.com/LightNabz/papan-keluhan.git
 cd papan-keluhan-siswa
 ```
 

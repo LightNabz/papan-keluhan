@@ -58,3 +58,22 @@ nav li {
   display: flex;
   align-items: center;
 }
+
+/* Styles for theme toggle button */
+.theme-toggle-btn {
+    padding: 0.5rem;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+}
+
+/* Icon styles */
+.icon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+/* GitHub link styles */
+.github-link {
+    display: flex;
+    align-items: center;
+}

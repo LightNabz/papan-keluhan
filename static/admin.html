@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Papan Keluhan</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" id="theme-style" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/global.css">
     <link rel="stylesheet" href="/static/css/animations.css">
     <link rel="stylesheet" href="/static/css/sambut.css">
@@ -28,6 +28,20 @@
             <li><a href="/admin">Dashboard</a></li>
             <li><a href="/admin/download">Download Data</a></li>
             <li><a href="/admin/logout">Logout</a></li>
+            <li>
+                <button id="toggle-theme" class="theme-toggle-btn">
+                    <span id="moon-icon" class="hidden">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                    </span>
+                    <span id="sun-icon">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"/>
+                        </svg>
+                    </span>
+                </button>
+            </li>
         </ul>
     </nav>
     
@@ -45,7 +59,7 @@
                         <p class="note-content">{{ note.content }}</p>
                         {% if note.image_url %}
                         <div class="note-image">
-                            <img src="{{ note.image_url }}" alt="Attached image for note">
+                            <img src="{{ note.image_url }}" alt="No image attached">
                         </div>
                         {% endif %}
                     </div>

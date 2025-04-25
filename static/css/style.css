@@ -8,16 +8,28 @@ body {
     overflow-x: hidden;
 }
 
-.hero {
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
     background-size: 50px 50px;
     background-image: 
         repeating-linear-gradient(0deg, rgba(137, 180, 250, 0.1) 0px, rgba(137, 180, 250, 0.1) 1px, transparent 1px, transparent 50px), 
         repeating-linear-gradient(90deg, rgba(137, 180, 250, 0.1) 0px, rgba(137, 180, 250, 0.1) 1px, transparent 1px, transparent 50px);
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-        -webkit-mask-size: 100% 100%;
-        mask-size: 100% 100%;
-    padding: 2rem;
+    -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
+    mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    pointer-events: none;
+}
+
+.hero {
+    padding: 1rem;
     color: #F5C2E7;
     display: flex;
     flex-direction: column;
@@ -27,6 +39,21 @@ body {
     text-align: center;
     gap: 1.5rem;
 }
+
+.spotlight {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(137, 180, 250, 0.15) 0%, transparent 80%);
+    pointer-events: none;
+    border-radius: 50%;
+    transform: translate(-50%, -20%);
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    mix-blend-mode: overlay; /* ganti ini */
+    filter: blur(20px); /* bikin glow lebih smooth */
+    z-index: 1;
+  }
 
 /* NAVBAR */
 nav {
@@ -115,7 +142,7 @@ a:hover {
     gap: 1rem;
 }
 
-button {
+.btn-transparent {
     border: 2px solid #F5C2E7;
     padding: 0.5rem 1rem;
     border-radius: 10px;
@@ -125,9 +152,25 @@ button {
     transition: all 0.3s ease;
 }
 
-button:hover {
-    background-color: #E0D8D1; /* Slightly lighter hover effect */
-    color: #1E1A1A;
+.btn-transparent:hover {
+    background-color: #F5C2E7; /* Slightly lighter hover effect */
+    color: #11111b;
+    transform: translateY(-2px); /* Subtle hover animation */
+}
+
+.btn-modal {
+    border: 2px solid #F5C2E7;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-weight: bold;
+    color: #F5C2E7;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-modal:hover {
+    background-color: #F5C2E7; /* Slightly lighter hover effect */
+    color: #11111b;
     transform: translateY(-2px); /* Subtle hover animation */
 }
 
@@ -170,12 +213,14 @@ button:hover {
     left: 10px; /* Adjust the distance from the left */
     gap: 0.5rem;
     margin: 0; /* Remove default margin */
-    font-size: 0.9rem; /* Optional: Adjust font size */
-    color: #F5C2E7; /* Optional: Ensure visibility */
+    font-size: 0.7rem; /* Optional: Adjust font size */
+    color: rgba(245, 194, 231, 0.6); /* Optional: Ensure visibility */
 }
 
 .modal {
     position: fixed;
+    width: 30%;
+    max-width: none;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -206,7 +251,7 @@ button:hover {
 
 footer {
     background-color: #11111B;
-    padding: 2rem;
+    padding: 1rem;
     text-align: center;
     font-size: 0.9rem;
     color: #999;
@@ -259,6 +304,32 @@ input[type="text"]:focus, textarea:focus {
     outline: none;
     border-color: #b7bdf8; /* Highlight border on focus */
     box-shadow: 0 0 5px #b7bdf8; /* Subtle glow effect */
+}
+
+select#jenis_keluhan {
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border: 2px solid #F5C2E7;
+    border-radius: 10px;
+    background-color: #181926;
+    color: #E0D8D1;
+    font-size: 1rem;
+    font-family: 'Fira Code', monospace;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    -webkit-appearance: none; /* Remove default arrow in some browsers */
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+select#jenis_keluhan:hover {
+    border-color: #B7BDF8;
+}
+
+select#jenis_keluhan:focus {
+    outline: none;
+    border-color: #b7bdf8;
+    box-shadow: 0 0 5px #b7bdf8;
 }
 
 textarea {

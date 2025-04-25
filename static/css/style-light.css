@@ -8,19 +8,28 @@ body {
     overflow-x: hidden;
 }
 
-.hero {
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
     background-size: 50px 50px;
     background-image: 
         repeating-linear-gradient(0deg, rgba(108, 112, 134, 0.15) 0px, rgba(108, 112, 134, 0.15) 1px, transparent 1px, transparent 50px), 
         repeating-linear-gradient(90deg, rgba(108, 112, 134, 0.15) 0px, rgba(108, 112, 134, 0.15) 1px, transparent 1px, transparent 50px);
     -webkit-mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-size: 100% 100%;
     mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
+    -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
-    backdrop-filter: blur(0.5px); 
-    padding: 2rem;
+    pointer-events: none;
+}
+
+.hero {
+    padding: 1rem;
     color: #4c4f69;
     display: flex;
     flex-direction: column;
@@ -29,6 +38,21 @@ body {
     min-height: 100vh;
     text-align: center;
     gap: 1.5rem;
+}
+
+.spotlight {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(230, 233, 239, 0.15) 0%, transparent 80%);
+    pointer-events: none;
+    border-radius: 50%;
+    transform: translate(-50%, -20%);
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    mix-blend-mode: overlay; /* ganti ini */
+    filter: blur(20px); /* bikin glow lebih smooth */
+    z-index: 1; /* jangan di atas semua biar nggak norak */
 }
 
 /* NAVBAR */
@@ -42,7 +66,7 @@ nav {
     top: 0;
     z-index: 1000;
     backdrop-filter: blur(10px);
-    color: #F5C2E7;
+    color: #f38ba8;
 }
 
 nav.scrolled {
@@ -54,7 +78,7 @@ nav > * {
 }
 
 a {
-    color: #F5C2E7;
+    color: #f38ba8;
     text-decoration: none;
     transition: color 0.3s ease;
 }
@@ -65,7 +89,7 @@ a:hover {
 .logo {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #F5C2E7;
+    color: #f38ba8;
 }
 
 #nav-links {
@@ -118,19 +142,35 @@ a:hover {
     gap: 1rem;
 }
 
-button {
-    border: 2px solid #F5C2E7;
+.btn-transparent {
+    border: 2px solid #f38ba8;
     padding: 0.5rem 1rem;
     border-radius: 10px;
     font-weight: bold;
-    color: #F5C2E7;
+    color: #f38ba8;
     background-color: transparent;
     transition: all 0.3s ease;
 }
 
-button:hover {
-    background-color: #E0D8D1; /* Slightly lighter hover effect */
-    color: #1E1A1A;
+.btn-transparent:hover {
+    background-color: #f38ba8; /* Slightly lighter hover effect */
+    color: #f1f1f1;
+    transform: translateY(-2px); /* Subtle hover animation */
+}
+
+.btn-modal {
+    border: 2px solid #4c4f69;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-weight: bold;
+    color: #4c4f69;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-modal:hover {
+    background-color: #4c4f69; /* Slightly lighter hover effect */
+    color: #f1f1f1;
     transform: translateY(-2px); /* Subtle hover animation */
 }
 
@@ -157,8 +197,8 @@ button:hover {
 .note:hover {
     transform: translateY(-5px);
     box-shadow: 
-        15px 15px 30px #0d0d13,
-        -15px -15px 30px #29293b;
+        15px 15px 30px #7c7f93,
+        -15px -15px 30px #7c7f93;
 }
 
 .note img {
@@ -174,15 +214,17 @@ button:hover {
     gap: 0.5rem;
     margin: 0; /* Remove default margin */
     font-size: 0.9rem; /* Optional: Adjust font size */
-    color: #F5C2E7; /* Optional: Ensure visibility */
+    color: #4c4f69; /* Optional: Ensure visibility */
 }
 
 .modal {
     position: fixed;
+    width: 30%;
+    max-width: none;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(17, 17, 27, 0.95); /* Darker modal background */
+    background: rgba(204, 208, 218, 0.95); /* Darker modal background */
     padding: 2rem;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Consistent shadow */
@@ -199,7 +241,7 @@ button:hover {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    color: #E0D8D1; /* Light text color */
+    color: #4c4f69; /* Light text color */
 }
 
 .modal-buttons {
@@ -208,42 +250,42 @@ button:hover {
 }
 
 footer {
-    background-color: #11111B;
-    padding: 2rem;
+    background-color: #dce0e8;
+    padding: 1rem;
     text-align: center;
     font-size: 0.9rem;
-    color: #999;
+    color: #4c4f69;
 }
 footer a {
-    color: #F5C2E7;
+    color: #4c4f69;
     text-decoration: underline;
 }
 
 .drag-drop-area {
-    border: 2px dashed #F5C2E7;
+    border: 2px dashed #4c4f69;
     border-radius: 10px;
     padding: 1rem;
     text-align: center;
-    color: #E0D8D1;
+    color: #4c4f69;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .drag-drop-area:hover {
-    background-color: rgba(245, 194, 231, 0.1);
+    background-color: rgba(114, 135, 253, 0.1);
 }
 
 .drag-drop-area.drag-over {
-    background-color: rgba(245, 194, 231, 0.2);
+    background-color: rgba(114, 135, 253, 0.2);
 }
 
 input[type="text"], textarea {
     padding: 0.75rem 1rem;
     margin-bottom: 1rem;
-    border: 2px solid #F5C2E7; /* Light border color */
+    border: 2px solid #4c4f69; /* Light border color */
     border-radius: 10px;
-    background-color: #181926; /* Dark background */
-    color: #E0D8D1; /* Light text color */
+    background-color: #ccd0da; /* Dark background */
+    color: #4c4f69; /* Light text color */
     font-size: 1rem;
     font-family: 'Fira Code', monospace; /* Consistent font */
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -264,6 +306,32 @@ input[type="text"]:focus, textarea:focus {
     box-shadow: 0 0 5px #b7bdf8; /* Subtle glow effect */
 }
 
+select#jenis_keluhan {
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border: 2px solid #4c4f69;
+    border-radius: 10px;
+    background-color: #ccd0da;
+    color: #4c4f69;
+    font-size: 1rem;
+    font-family: 'Fira Code', monospace;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    -webkit-appearance: none; /* Remove default arrow in some browsers */
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+select#jenis_keluhan:hover {
+    border-color: #B7BDF8;
+}
+
+select#jenis_keluhan:focus {
+    outline: none;
+    border-color: #b7bdf8;
+    box-shadow: 0 0 5px #b7bdf8;
+}
+
 textarea {
     resize: none; /* Prevent resizing */
     height: 100px; /* Set a consistent height */
@@ -279,7 +347,7 @@ textarea {
     margin-top: 1rem;
     border-radius: 10px;
     overflow: hidden;
-    border: 2px solid #F5C2E7;
+    border: 2px solid #4c4f69;
     background-color: #181926;
     padding: 0.5rem;
 }

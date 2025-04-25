@@ -12,6 +12,7 @@ import pandas as pd
 from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
+from io import BytesIO
 
 app = FastAPI()
 security = HTTPBasic()
@@ -40,7 +41,6 @@ headers = {
     "Content-Type": "application/json"
 }
 
-# Add these env variables
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
@@ -167,9 +167,10 @@ async def download_data(credentials: HTTPBasicCredentials = Depends(verify_admin
         column_names = {
             'id': 'No.',  # Changed from 'ID' to shorter 'No.'
             'created_at': 'Tanggal',  # Shortened from 'Tanggal Dibuat'
+            'jenis_keluhan': 'Jenis Keluhan',
             'title': 'Judul',
             'content': 'Isi Keluhan',
-            'name': 'Nama',
+            'name': 'Oleh',
             'image_url': 'Gambar'  # Shortened from 'URL Gambar'
         }
         df = df.rename(columns=column_names)
@@ -186,13 +187,23 @@ async def download_data(credentials: HTTPBasicCredentials = Depends(verify_admin
         # Create Excel file
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"laporan_keluhan_{timestamp}.xlsx"
-        filepath = f"/tmp/{filename}"
+        # Use a platform-independent temporary directory
+        import tempfile
+        # Detect if running on Vercel
+        if os.getenv("VERCEL"):
+            temp_dir = "/tmp"
+        else:
+            temp_dir = tempfile.gettempdir()
+        filepath = os.path.join(temp_dir, filename)
+        
+        # Ensure the directory exists (tempfile.gettempdir() should exist, but just in case)
+        os.makedirs(temp_dir, exist_ok=True)
         
         # Create Excel writer with xlsxwriter engine
         writer = pd.ExcelWriter(filepath, engine='xlsxwriter')
         
-        # Write to Excel with styling
-        df.to_excel(writer, sheet_name='Laporan Keluhan', index=False)
+        # Write to Excel with styling, skip header and start at row 2
+        df.to_excel(writer, sheet_name='Laporan Keluhan', index=False, header=False, startrow=2)
         
         # Get workbook and worksheet objects
         workbook = writer.book
@@ -217,10 +228,9 @@ async def download_data(credentials: HTTPBasicCredentials = Depends(verify_admin
             'text_wrap': True
         })
         
-        # Apply formats
-        for col_num, value in enumerate(df.columns.values):
-            worksheet.write(0, col_num, value, header_format)
-            
+        # Write header row at row 1
+        worksheet.write_row(1, 0, df.columns, header_format)
+        
         # Set column widths with updated sizes
         worksheet.set_column('A:A', 10)  # No. (shortened from 36)
         worksheet.set_column('B:B', 12)  # Tanggal (shortened from 20)
@@ -229,10 +239,10 @@ async def download_data(credentials: HTTPBasicCredentials = Depends(verify_admin
         worksheet.set_column('E:E', 15)  # Nama (shortened from 20)
         worksheet.set_column('F:F', 25)  # Gambar (shortened from 40)
 
-        # Apply cell format to data
-        for row in range(1, len(df) + 1):
+        # Apply cell format to data rows starting from row 2
+        for row in range(len(df)):
             for col in range(len(df.columns)):
-                worksheet.write(row, col, df.iloc[row-1, col], cell_format)
+                worksheet.write(row + 2, col, df.iloc[row, col], cell_format)
         
         # Add title
         title_format = workbook.add_format({
@@ -241,11 +251,6 @@ async def download_data(credentials: HTTPBasicCredentials = Depends(verify_admin
             'align': 'center'
         })
         worksheet.merge_range('A1:F1', 'LAPORAN KELUHAN SISWA', title_format)
-        worksheet.write_row(1, 0, df.columns, header_format)
-        
-        # Write data starting from row 2
-        for row in range(len(df)):
-            worksheet.write_row(row + 2, 0, df.iloc[row], cell_format)
         
         # Save and close
         writer.close()
@@ -296,11 +301,12 @@ async def submit_note(
     title: str = Form(...),
     content: str = Form(...),
     name: str = Form("Anon"),
+    jenis_keluhan: str = Form(...),
     image: UploadFile = File(None)
 ):
     image_url = None
 
-    if image:
+    if image and image.filename:
         image_bytes = await image.read()
         filename = f"{uuid.uuid4()}_{image.filename}"
         async with httpx.AsyncClient() as client:
@@ -317,6 +323,7 @@ async def submit_note(
         "title": title,
         "content": content,
         "name": name,
+        "jenis_keluhan": jenis_keluhan,
         "image_url": image_url
     }
     async with httpx.AsyncClient() as client:
