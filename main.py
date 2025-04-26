@@ -4,6 +4,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
+from starlette.middleware.sessions import SessionMiddleware
 import httpx
 import uuid
 import os
@@ -45,7 +46,10 @@ headers = {
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
-# Authentication helper
+# Add session middleware with a secret key
+app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET_KEY", "supersecretkey"))
+
+# Authentication helper for HTTP Basic (keep for other uses)
 def verify_admin(credentials: HTTPBasicCredentials = Depends(security)):
     is_username_correct = secrets.compare_digest(credentials.username, ADMIN_USERNAME)
     is_password_correct = secrets.compare_digest(credentials.password, ADMIN_PASSWORD)
@@ -58,9 +62,26 @@ def verify_admin(credentials: HTTPBasicCredentials = Depends(security)):
         )
     return credentials
 
-# Admin routes
+# New login page GET route
+@app.get("/admin/login", response_class=HTMLResponse)
+async def admin_login_get(request: Request):
+    return templates.TemplateResponse("admin_login.html", {"request": request, "error": None})
+
+# New login page POST route
+@app.post("/admin/login", response_class=HTMLResponse)
+async def admin_login_post(request: Request, username: str = Form(...), password: str = Form(...)):
+    if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+        request.session["admin_logged_in"] = True
+        return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
+    else:
+        return templates.TemplateResponse("admin_login.html", {"request": request, "error": "Invalid username or password"})
+
+# Modified admin dashboard route to check session instead of HTTP Basic Auth
 @app.get("/admin", response_class=HTMLResponse)
-async def admin_dashboard(request: Request, credentials: HTTPBasicCredentials = Depends(verify_admin)):
+async def admin_dashboard(request: Request):
+    if not request.session.get("admin_logged_in"):
+        return RedirectResponse(url="/admin/login", status_code=status.HTTP_303_SEE_OTHER)
+
     async with httpx.AsyncClient() as client:
         res = await client.get(
             f"{SUPABASE_URL}/rest/v1/notes?select=*&order=created_at.desc",
@@ -103,8 +124,11 @@ async def admin_dashboard(request: Request, credentials: HTTPBasicCredentials = 
 async def delete_note(
     note_id: str,
     request: Request, 
-    credentials: HTTPBasicCredentials = Depends(verify_admin)
+    # Remove HTTP Basic Auth dependency here since session is used
 ):
+    if not request.session.get("admin_logged_in"):
+        return RedirectResponse(url="/admin/login", status_code=status.HTTP_303_SEE_OTHER)
+
     # Create headers with specific content types
     db_headers = {
         "apikey": SUPABASE_KEY,
@@ -173,7 +197,10 @@ async def delete_note(
         return JSONResponse(content={"message": "Note deleted successfully"})
 
 @app.get("/admin/download")
-async def download_data(credentials: HTTPBasicCredentials = Depends(verify_admin)):
+async def download_data(request: Request):
+    if not request.session.get("admin_logged_in"):
+        return RedirectResponse(url="/admin/login", status_code=status.HTTP_303_SEE_OTHER)
+
     async with httpx.AsyncClient() as client:
         res = await client.get(
             f"{SUPABASE_URL}/rest/v1/notes?select=*&order=created_at.desc",
@@ -301,12 +328,9 @@ async def download_data(credentials: HTTPBasicCredentials = Depends(verify_admin
         )
 
 @app.get("/admin/logout")
-async def logout():
-    return RedirectResponse(
-        url="/",
-        status_code=status.HTTP_302_FOUND,
-        headers={"WWW-Authenticate": "Basic"}
-    )
+async def logout(request: Request):
+    request.session.clear()
+    return RedirectResponse(url="/admin/login", status_code=status.HTTP_303_SEE_OTHER)
 
 @app.get("/notes")
 async def get_notes():
@@ -328,8 +352,11 @@ class StatusUpdate(BaseModel):
 async def update_note_status(
     note_id: str,
     status_update: StatusUpdate,
-    credentials: HTTPBasicCredentials = Depends(verify_admin)
+    request: Request
 ):
+    if not request.session.get("admin_logged_in"):
+        return RedirectResponse(url="/admin/login", status_code=status.HTTP_303_SEE_OTHER)
+
     status = status_update.status
     async with httpx.AsyncClient() as client:
         url = f'{SUPABASE_URL}/rest/v1/notes'
@@ -347,19 +374,17 @@ async def update_note_status(
         error_detail = res.text
         return JSONResponse(content={"error": f"Failed to update status: {error_detail}"}, status_code=500)
 
-@app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
-    async with httpx.AsyncClient() as client:
-        res = await client.get(
-            f"{SUPABASE_URL}/rest/v1/notes?select=*&order=created_at.desc",
-            headers=headers
-        )
-        notes = res.json() if res.status_code == 200 else []
+@app.get("/admin/login", response_class=HTMLResponse)
+async def admin_login_get(request: Request):
+    return templates.TemplateResponse("admin_login.html", {"request": request, "error": None})
 
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "notes": notes
-    })
+@app.post("/admin/login", response_class=HTMLResponse)
+async def admin_login_post(request: Request, username: str = Form(...), password: str = Form(...)):
+    if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+        request.session["admin_logged_in"] = True
+        return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
+    else:
+        return templates.TemplateResponse("admin_login.html", {"request": request, "error": "Invalid username or password"})
 
 @app.post("/submit")
 async def submit_note(
@@ -401,3 +426,17 @@ async def submit_note(
     if res.status_code == 201:
         return RedirectResponse(url="/", status_code=303)
     return JSONResponse(content={"error": "Failed to submit note"}, status_code=500)
+
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    async with httpx.AsyncClient() as client:
+        res = await client.get(
+            f"{SUPABASE_URL}/rest/v1/notes?select=*&order=created_at.desc",
+            headers=headers
+        )
+        notes = res.json() if res.status_code == 200 else []
+
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "notes": notes
+    })

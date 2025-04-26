@@ -171,9 +171,9 @@ a:hover {
 }
 
 .btn-modal:hover {
-    background-color: #4c4f69; /* Slightly lighter hover effect */
+    background-color: #4c4f69;
     color: #f1f1f1;
-    transform: translateY(-2px); /* Subtle hover animation */
+    transform: translateY(-2px);
 }
 
 .note-list {
