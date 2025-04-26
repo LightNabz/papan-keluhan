@@ -166,13 +166,14 @@ async def download_data(credentials: HTTPBasicCredentials = Depends(verify_admin
         
         # Rename columns to be more readable
         column_names = {
-            'id': 'No.',  # Changed from 'ID' to shorter 'No.'
-            'created_at': 'Tanggal',  # Shortened from 'Tanggal Dibuat'
+            'id': 'No.',
+            'created_at': 'Tanggal',
             'jenis_keluhan': 'Jenis Keluhan',
             'title': 'Judul',
             'content': 'Isi Keluhan',
             'name': 'Oleh',
-            'image_url': 'Gambar'  # Shortened from 'URL Gambar'
+            'image_url': 'Gambar' ,
+            'status': 'Status'
         }
         df = df.rename(columns=column_names)
 
@@ -239,7 +240,8 @@ async def download_data(credentials: HTTPBasicCredentials = Depends(verify_admin
         worksheet.set_column('D:D', 20)  # Nama
         worksheet.set_column('E:E', 15)  # Gambar
         worksheet.set_column('F:F', 20)  # Jenis Keluhan
-        worksheet.set_column('F:F', 15)  # Tanggal
+        worksheet.set_column('G:G', 15)  # Tanggal
+        worksheet.set_column('H:H', 25)  # Status
         # Apply cell format to data rows starting from row 2
         for row in range(len(df)):
             for col in range(len(df.columns)):
@@ -262,7 +264,7 @@ async def download_data(credentials: HTTPBasicCredentials = Depends(verify_admin
         tanggal_laporan = datetime.now().strftime('%d %B %Y')
         judul_laporan = f"LAPORAN KELUHAN SISWA {tanggal_laporan.upper()}"
 
-        worksheet.merge_range('A1:F1', judul_laporan, title_format)
+        worksheet.merge_range('A1:H1', judul_laporan, title_format)
         
         # Save and close
         writer.close()
@@ -293,6 +295,34 @@ async def get_notes():
             return JSONResponse(content=res.json())
         return JSONResponse(content={"error": "Failed to fetch notes"}, status_code=500)
 
+from pydantic import BaseModel
+
+class StatusUpdate(BaseModel):
+    status: str
+
+@app.patch("/admin/update_status/{note_id}")
+async def update_note_status(
+    note_id: str,
+    status_update: StatusUpdate,
+    credentials: HTTPBasicCredentials = Depends(verify_admin)
+):
+    status = status_update.status
+    async with httpx.AsyncClient() as client:
+        url = f'{SUPABASE_URL}/rest/v1/notes'
+        params = {"id": f"eq.{note_id}"}
+        res = await client.patch(
+            url,
+            params=params,
+            json={"status": status},
+            headers={**headers, "Content-Type": "application/json", "Prefer": "return=representation"},
+        )
+        print(f"Update status response: {res.status_code}, {res.text}")  # Debug log
+    if res.status_code in [200, 204]:
+        return JSONResponse(content={"message": "Status updated successfully"})
+    else:
+        error_detail = res.text
+        return JSONResponse(content={"error": f"Failed to update status: {error_detail}"}, status_code=500)
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     async with httpx.AsyncClient() as client:
@@ -314,6 +344,7 @@ async def submit_note(
     content: str = Form(...),
     name: str = Form("Anon"),
     jenis_keluhan: str = Form(...),
+    status: str = Form("Menunggu Respon"),
     image: UploadFile = File(None)
 ):
     image_url = None
@@ -336,6 +367,7 @@ async def submit_note(
         "content": content,
         "name": name,
         "jenis_keluhan": jenis_keluhan,
+        "status": status,
         "image_url": image_url
     }
     async with httpx.AsyncClient() as client:

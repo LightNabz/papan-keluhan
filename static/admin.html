@@ -15,6 +15,54 @@
             color: #f1f1f1;
             border: 2px solid #d20f39;
         }
+        
+        /* Ini bagian theme light */
+        .status-select {
+            padding: 6px 10px;
+            border: 1px solid #4c4f69;
+            border-radius: 10px;
+            background-color: #eff1f5;
+            color: #4c4f69;
+            font-size: 14px;
+            font-family: 'Fira Code', monospace;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        /* Karena opsional OwO 
+        .status-select:hover {
+            border-color: #B7BDF8;
+        }
+
+        .status-select:focus {
+            outline: none;
+            border-color: #b7bdf8;
+            box-shadow: 0 0 5px #b7bdf8;
+            background-color: #e6f0fa;
+        } */
+
+        /* Ini bagian theme dark */
+        .dark .status-select {
+            padding: 6px 10px;
+            border: 1px solid #F5C2E7;
+            border-radius: 10px;
+            background-color: #181926;
+            color: #E0D8D1;
+            font-size: 14px;
+            font-family: 'Fira Code', monospace;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        /* Karena opsional OwO 
+        .status-select:hover {
+            border-color: #B7BDF8;
+        }
+
+        .status-select:focus {
+            outline: none;
+            border-color: #b7bdf8;
+            box-shadow: 0 0 5px #b7bdf8;
+            background-color: #e6f0fa;
+        } */
     </style>
 </head>
 <body>
@@ -51,7 +99,7 @@
             <h1>Admin Dashboard</h1>
             <div class="note-list">
                 {% for note in notes %}
-                <div class="note box">
+                <div class="note box" data-note-id="{{ note.id }}">
                     <div class="note-header">
                         <p class="note-author">Oleh: {{ note.name or "Anon" }}</p>
                         <h3 class="note-title">{{ note.title }}</h3>
@@ -64,6 +112,14 @@
                         </div>
                         {% endif %}
                         <p class="note-category">{{ note.jenis_keluhan }}</p>
+                        <p class="note-status">
+                            <label for="status-select-{{ note.id }}"><strong>Status:</strong></label>
+                            <select id="status-select-{{ note.id }}" class="status-select" data-note-id="{{ note.id }}">
+                                <option value="Menunggu Respon" {% if note.status == "Menunggu Respon" %}selected{% endif %}>Menunggu Respon</option>
+                                <option value="Sedang diproses" {% if note.status == "Sedang diproses" %}selected{% endif %}>Sedang diproses</option>
+                                <option value="Telah ditindaklanjuti" {% if note.status == "Telah ditindaklanjuti" %}selected{% endif %}>Telah ditindaklanjuti</option>
+                            </select>
+                        </p>
                     </div>
                     <div class="note-actions">
                         <button class="btn-transparent delete-btn" data-note-id="{{ note.id }}" data-image-url="{{ note.image_url }}">
@@ -103,6 +159,34 @@
                         console.error('Error:', error);
                         alert('Failed to delete note');
                     }
+                }
+            });
+        });
+
+        // Add event listeners for status select changes
+        document.querySelectorAll('.status-select').forEach(select => {
+            select.addEventListener('change', async (event) => {
+                const noteId = event.target.dataset.noteId;
+                const newStatus = event.target.value;
+
+                try {
+                    const response = await fetch(`/admin/update_status/${noteId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ status: newStatus })
+                    });
+
+                    if (response.ok) {
+                        alert('Status updated successfully');
+                    } else {
+                        const error = await response.json();
+                        alert(error.error || 'Failed to update status');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to update status');
                 }
             });
         });

@@ -98,6 +98,7 @@
               </div>
             {% endif %}
             <p class="note-category">{{ note.jenis_keluhan }}</p>
+            <p class="note-status"><strong>Status:</strong> {{ note.status or "Menunggu Respon" }}</p>
           </div>
         </div>
       {% endfor %}
@@ -182,6 +183,7 @@
           <p class="note-content">${note.content}</p>
           ${note.image_url ? `<div class="note-image"><img src="${note.image_url}" alt="No image attached"></div>` : ""}
           <p class="note-category">${note.jenis_keluhan}</p>
+          <p class="note-status"><strong>Status:</strong> ${note.status || "Menunggu Respon"}</p>
         </div>
       `;
       container.appendChild(noteDiv);
