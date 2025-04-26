@@ -6,3 +6,4 @@ xlsxwriter
 python-dotenv
 jinja2
 uvicorn
+itsdangerous
