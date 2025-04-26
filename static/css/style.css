@@ -28,6 +28,8 @@ body::before {
     pointer-events: none;
 }
 
+button {font-family: 'Fira Code', monospace;}
+
 .hero {
     padding: 1rem;
     color: #F5C2E7;

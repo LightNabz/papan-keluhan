@@ -13,6 +13,7 @@ from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
 from io import BytesIO
+import locale
 
 app = FastAPI()
 security = HTTPBasic()
@@ -250,7 +251,18 @@ async def download_data(credentials: HTTPBasicCredentials = Depends(verify_admin
             'font_size': 16,
             'align': 'center'
         })
-        worksheet.merge_range('A1:F1', 'LAPORAN KELUHAN SISWA', title_format)
+
+        # Header OwO
+        try:
+            locale.setlocale(locale.LC_TIME, 'id_ID.utf8')
+        except:
+            # fallback kalau locale gak tersedia di server
+            locale.setlocale(locale.LC_TIME, 'C')
+
+        tanggal_laporan = datetime.now().strftime('%d %B %Y')
+        judul_laporan = f"LAPORAN KELUHAN SISWA {tanggal_laporan.upper()}"
+
+        worksheet.merge_range('A1:F1', judul_laporan, title_format)
         
         # Save and close
         writer.close()
