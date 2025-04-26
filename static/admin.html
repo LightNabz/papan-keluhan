@@ -63,11 +63,77 @@
             box-shadow: 0 0 5px #b7bdf8;
             background-color: #e6f0fa;
         } */
+
+        .statistics {
+            background: rgba(220, 224, 232, 0.6); /* Darker box background */
+            border-radius: 20px;
+            border: 1px solid #f38ba8;
+            padding: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 600px; /* Limit the width of the note box */
+            height: auto;
+            margin: 0 auto; /* Center the note box */
+            gap: 1.5rem;
+            position: relative; /* Ensure positioning context for child elements */
+            text-align: justify; /* Align content to the left */
+            overflow: hidden;
+        }
+
+        .statistics h2 {
+            color: #f38ba8;
+        }
+
+        .statistics p {
+            color: #5c5f77;
+        }
+
+        .statistics ul {
+            color: #6c6f85;
+        }
+
+        .dark .statistics {
+            background: rgba(49, 50, 68, 0.6); /* Darker box background */
+            border-radius: 20px;
+            border: 1px solid rgb(203, 166, 247);
+            padding: 1rem;
+            color: rgb(205, 214, 244);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 600px; /* Limit the width of the note box */
+            margin: 0 auto; /* Center the note box */
+            gap: 1.5rem;
+            position: relative; /* Ensure positioning context for child elements */
+            text-align: left; /* Align content to the left */
+            overflow: hidden;
+        }
+        
+        .dark .statistics p {
+            color: #cdd6f4;
+        }
+        .dark .statistics h2 {
+            color: #f5c2e7;
+        }
+
+        .dark .statistics ul {
+            color: #a6adc8;
+        }
+
+        .statistics li {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        @media screen and (max-width: 768px) {
+            .dark .statistics,
+            .statistics {
+                width: calc(100% - 2rem); /* Account for note padding */
+                margin: 0 auto; /* Center the note */
+                box-sizing: border-box; /* Include padding in width calculation */
+            }
+        }
     </style>
 </head>
 <body>
     <nav>
-        <div class="logo">Admin Dashboard</div>
+        <div class="logo">Papan Keluhan</div>
         <div class="hamburger" onclick="toggleMenu()">
             <div></div>
             <div></div>
@@ -97,6 +163,24 @@
     <div class="hero" id="beranda">
         <div class="container">
             <h1>Admin Dashboard</h1>
+            <div class="statistics">
+                <h2>Statistics</h2>
+                <p><strong>Total Keluhan:</strong> {{ total_notes }}</p>
+                <p><strong>Jenis Keluhan:</strong></p>
+                <ul>
+                    <li>Perundungan: {{ jenis_keluhan_counts["Perundungan"] }}</li>
+                    <li>Sarana/prasarana: {{ jenis_keluhan_counts["Sarana/prasarana"] }}</li>
+                    <li>Saran: {{ jenis_keluhan_counts["Saran"] }}</li>
+                </ul>
+                <p><strong>Status:</strong></p>
+                <ul>
+                    <li>Sedang diproses: {{ status_counts["Sedang diproses"] }}</li>
+                    <li>Menunggu Respon: {{ status_counts["Menunggu Respon"] }}</li>
+                    <li>Telah ditindaklanjuti: {{ status_counts["Telah ditindaklanjuti"] }}</li>
+                </ul>
+            </div>
+
+            <h1>Keluhan</h1>
             <div class="note-list">
                 {% for note in notes %}
                 <div class="note box" data-note-id="{{ note.id }}">

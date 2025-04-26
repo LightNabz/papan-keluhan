@@ -68,9 +68,33 @@ async def admin_dashboard(request: Request, credentials: HTTPBasicCredentials = 
         )
         notes = res.json() if res.status_code == 200 else []
 
+    # Compute statistics
+    total_notes = len(notes)
+    jenis_keluhan_counts = {
+        "Perundungan": 0,
+        "Sarana/prasarana": 0,
+        "Saran": 0
+    }
+    status_counts = {
+        "Sedang diproses": 0,
+        "Menunggu Respon": 0,
+        "Telah ditindaklanjuti": 0
+    }
+
+    for note in notes:
+        jk = note.get("jenis_keluhan")
+        st = note.get("status")
+        if jk in jenis_keluhan_counts:
+            jenis_keluhan_counts[jk] += 1
+        if st in status_counts:
+            status_counts[st] += 1
+
     response = templates.TemplateResponse("admin.html", {
         "request": request,
-        "notes": notes
+        "notes": notes,
+        "total_notes": total_notes,
+        "jenis_keluhan_counts": jenis_keluhan_counts,
+        "status_counts": status_counts
     })
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return response
