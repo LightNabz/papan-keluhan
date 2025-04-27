@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Request, Form, UploadFile, File, Depends, HTTPException, status
+# from email_sender import send_email_report
+from discord_sender import send_discord_report # Bisa diganti disini kalau mw pakai email atau discord webhook
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.staticfiles import StaticFiles
@@ -424,6 +426,14 @@ async def submit_note(
         print(f"Submit note response: {res.status_code}, {res.text}")  # Debug log
 
     if res.status_code == 201:
+        if jenis_keluhan.lower() == "perundungan":
+            # Yang ini untuk discord webhook
+            content = f"**Laporan Perundungan Baru**\n\nJudul: {title}\nIsi Keluhan: {content}\nOleh: {name}\nStatus: {status}"
+            send_discord_report(content)
+            # Yang di comment ini pakai method email
+            # subject = "Laporan Perundungan Baru"
+            # body = f"Judul: {title}\nIsi Keluhan: {content}\nOleh: {name}\nStatus: {status}"
+            # send_email_report(subject, body)
         return RedirectResponse(url="/", status_code=303)
     return JSONResponse(content={"error": "Failed to submit note"}, status_code=500)
 
