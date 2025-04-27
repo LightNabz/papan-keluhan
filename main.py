@@ -399,7 +399,7 @@ async def submit_note(
     image: UploadFile = File(None)
 ):
     image_url = None
-
+    tgl_laporan_perundungan = datetime.now().strftime('%d %B %Y')
     if image and image.filename:
         image_bytes = await image.read()
         filename = f"{uuid.uuid4()}_{image.filename}"
@@ -428,7 +428,8 @@ async def submit_note(
     if res.status_code == 201:
         if jenis_keluhan.lower() == "perundungan":
             # Yang ini untuk discord webhook
-            content = f"**Laporan Perundungan Baru**\n\nJudul: {title}\nIsi Keluhan: {content}\nOleh: {name}\nStatus: {status}"
+            # Comment ini bila memakai method email
+            content = f"\n**Laporan Perundungan Baru ({tgl_laporan_perundungan}):**\n\n**Judul:** {title}\n\n**Isi:**\n{content}\n\n**Oleh:** {name}\n\n**Status:** *{status}*\n"
             send_discord_report(content)
             # Yang di comment ini pakai method email
             # subject = "Laporan Perundungan Baru"
