@@ -16,6 +16,7 @@
 - **Panel Admin** Penghapusan keluhan beserta gambar terkait.
 - **Panel Admin** Unduh laporan keluhan dalam format Excel.
 - **Panel Admin** Pembaruan status keluhan melalui endpoint khusus.
+- **Panel Admin** Statistik keluhan diperbarui secara dinamis.
 
 ---
 
@@ -487,7 +488,60 @@ BASE_DIR = Path(__file__).resolve().parent
 
 ---
 
-## 📄 Endpoint
+### Endpoint GET `/admin/statistics`
+
+```python
+@app.get("/admin/statistics")
+async def admin_statistics(request: Request):
+    if not request.session.get("admin_logged_in"):
+        return JSONResponse(status_code=401, content={"error": "Unauthorized"})
+
+    async with httpx.AsyncClient() as client:
+        res = await client.get(
+            f"{SUPABASE_URL}/rest/v1/notes?select=*&order=created_at.desc",
+            headers=headers
+        )
+        notes = res.json() if res.status_code == 200 else []
+
+    total_notes = len(notes)
+    jenis_keluhan_counts = {
+        "Perundungan": 0,
+        "Sarana/prasarana": 0,
+        "Saran": 0
+    }
+    status_counts = {
+        "Sedang diproses": 0,
+        "Menunggu Respon": 0,
+        "Telah ditindaklanjuti": 0
+    }
+
+    for note in notes:
+        jk = note.get("jenis_keluhan")
+        st = note.get("status")
+        if jk in jenis_keluhan_counts:
+            jenis_keluhan_counts[jk] += 1
+        if st in status_counts:
+            status_counts[st] += 1
+
+    return JSONResponse(content={
+        "total_notes": total_notes,
+        "jenis_keluhan_counts": jenis_keluhan_counts,
+        "status_counts": status_counts
+    })
+```
+
+- Fungsi ini adalah route handler untuk endpoint "/admin/statistics", yang bisa diakses oleh administrator.
+- Cek apakah sesi admin sudah login dengan request.session.get("admin_logged_in"). Jika belum, akan mengembalikan response dengan status 401 Unauthorized.
+- Menggunakan httpx.AsyncClient untuk melakukan request ke API Supabase yang mengambil data dari tabel notes.
+- Data yang diambil berupa catatan (notes), dan diurutkan berdasarkan tanggal pembuatan (created_at.desc).
+- Jika request ke Supabase berhasil (status code 200), maka data JSON yang diterima akan disimpan di notes. Jika gagal, maka notes di-set jadi list kosong.
+- Membuat dua dictionary untuk menghitung jumlah kategori keluhan dan status
+- Melakukan loop terhadap setiap note dalam notes. Untuk setiap note, kategori keluhan dan status akan dihitung dan dimasukkan ke dalam dictionary yang sesuai.
+- Mengembalikan response dalam format JSON yang berisi; `total_notes`, `jenis_keluhan_counts`, dan `status_counts`.
+
+---
+
+## 📄 Fungsi Endpoint
 
 #### GET `/`
 Menampilkan halaman utama dengan daftar keluhan terbaru.
@@ -504,7 +558,10 @@ Mengambil semua catatan keluhan dalam format JSON.
   Halaman login admin dengan autentikasi berbasis sesi.
 
 - GET `/admin`  
-  Dashboard admin yang menampilkan daftar keluhan, statistik jenis keluhan dan status.
+  Dashboard admin yang menampilkan daftar keluhan, statistik jenis keluhan dan status. Endpoint ini juga menyediakan data statistik untuk animasi angka dinamis pada frontend admin.
+
+- GET `/admin/statistics`  
+  Endpoint baru yang mengembalikan data statistik keluhan dalam format JSON. Digunakan oleh frontend admin untuk memperbarui statistik secara dinamis.
 
 - DELETE `/admin/delete/{note_id}`  
   Menghapus keluhan beserta gambar terkait.

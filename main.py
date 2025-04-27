@@ -122,6 +122,44 @@ async def admin_dashboard(request: Request):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return response
 
+@app.get("/admin/statistics")
+async def admin_statistics(request: Request):
+    if not request.session.get("admin_logged_in"):
+        return JSONResponse(status_code=401, content={"error": "Unauthorized"})
+
+    async with httpx.AsyncClient() as client:
+        res = await client.get(
+            f"{SUPABASE_URL}/rest/v1/notes?select=*&order=created_at.desc",
+            headers=headers
+        )
+        notes = res.json() if res.status_code == 200 else []
+
+    total_notes = len(notes)
+    jenis_keluhan_counts = {
+        "Perundungan": 0,
+        "Sarana/prasarana": 0,
+        "Saran": 0
+    }
+    status_counts = {
+        "Sedang diproses": 0,
+        "Menunggu Respon": 0,
+        "Telah ditindaklanjuti": 0
+    }
+
+    for note in notes:
+        jk = note.get("jenis_keluhan")
+        st = note.get("status")
+        if jk in jenis_keluhan_counts:
+            jenis_keluhan_counts[jk] += 1
+        if st in status_counts:
+            status_counts[st] += 1
+
+    return JSONResponse(content={
+        "total_notes": total_notes,
+        "jenis_keluhan_counts": jenis_keluhan_counts,
+        "status_counts": status_counts
+    })
+
 @app.delete("/admin/delete/{note_id}")
 async def delete_note(
     note_id: str,
