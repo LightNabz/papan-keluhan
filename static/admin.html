@@ -237,6 +237,7 @@
 
                         if (response.ok) {
                             button.closest('.note').remove();
+                            updateStatistics(); // Refresh statistics after delete
                         } else {
                             const error = await response.json();
                             alert(error.error || 'Failed to delete note');
@@ -266,6 +267,7 @@
 
                     if (response.ok) {
                         alert('Status updated successfully');
+                        updateStatistics(); // Refresh statistics after status update
                     } else {
                         const error = await response.json();
                         alert(error.error || 'Failed to update status');
@@ -366,9 +368,128 @@
         updateStatistics();
 
         // Update every 10 seconds
-        setInterval(updateStatistics, 10000);
+        // setInterval(updateStatistics, 10000);
     </script>
+    <script>
+      // Function to attach event listeners to delete buttons and status selects
+      function attachEventListeners() {
+        // Delete buttons
+        document.querySelectorAll('.delete-btn').forEach(button => {
+          button.removeEventListener('click', handleDeleteClick);
+          button.addEventListener('click', handleDeleteClick);
+        });
 
+        // Status selects
+        document.querySelectorAll('.status-select').forEach(select => {
+          select.removeEventListener('change', handleStatusChange);
+          select.addEventListener('change', handleStatusChange);
+        });
+      }
+
+      // Handler for delete button click
+      async function handleDeleteClick(event) {
+        const button = event.currentTarget;
+        if (confirm('Are you sure you want to delete this note?')) {
+          const noteId = button.dataset.noteId;
+          try {
+            const response = await fetch(`/admin/delete/${noteId}`, {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' }
+            });
+            if (response.ok) {
+              button.closest('.note').remove();
+              updateStatistics();
+            } else {
+              const error = await response.json();
+              alert(error.error || 'Failed to delete note');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to delete note');
+          }
+        }
+      }
+
+      // Handler for status select change
+      async function handleStatusChange(event) {
+        const select = event.currentTarget;
+        const noteId = select.dataset.noteId;
+        const newStatus = select.value;
+        try {
+          const response = await fetch(`/admin/update_status/${noteId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+          });
+          if (response.ok) {
+            alert('Status updated successfully');
+            updateStatistics();
+          } else {
+            const error = await response.json();
+            alert(error.error || 'Failed to update status');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Failed to update status');
+        }
+      }
+
+      // Function to reload the note list on admin page
+      async function reloadNotes() {
+        try {
+          const response = await fetch('/notes');
+          if (!response.ok) throw new Error('Failed to fetch notes');
+          const notes = await response.json();
+          const container = document.querySelector('.note-list');
+          container.innerHTML = '';
+          notes.forEach(note => {
+            const noteDiv = document.createElement('div');
+            noteDiv.className = 'note box';
+            noteDiv.innerHTML = `
+              <div class="note-header">
+                <p class="note-author">Oleh: ${note.name || 'Anon'}</p>
+                <h3 class="note-title">${note.title}</h3>
+              </div>
+              <div class="note-body">
+                <p class="note-content">${note.content}</p>
+                ${note.image_url ? `<div class="note-image"><img src="${note.image_url}" alt="No image attached"></div>` : ''}
+                <p class="note-category">${note.jenis_keluhan}</p>
+                <p class="note-status">
+                  <label for="status-select-${note.id}"><strong>Status:</strong></label>
+                  <select id="status-select-${note.id}" class="status-select" data-note-id="${note.id}">
+                    <option value="Menunggu Respon" ${note.status === 'Menunggu Respon' ? 'selected' : ''}>Menunggu Respon</option>
+                    <option value="Sedang diproses" ${note.status === 'Sedang diproses' ? 'selected' : ''}>Sedang diproses</option>
+                    <option value="Telah ditindaklanjuti" ${note.status === 'Telah ditindaklanjuti' ? 'selected' : ''}>Telah ditindaklanjuti</option>
+                    <option value="Ditolak" ${note.status === 'Ditolak' ? 'selected' : ''}>Ditolak</option>
+                  </select>
+                </p>
+              </div>
+              <div class="note-actions">
+                <button class="btn-transparent delete-btn" data-note-id="${note.id}" data-image-url="${note.image_url}">
+                  🗑️ Delete
+                </button>
+              </div>
+            `;
+            container.appendChild(noteDiv);
+          });
+          // Reattach event listeners for new elements
+          attachEventListeners();
+        } catch (error) {
+          console.error('Error reloading notes:', error);
+        }
+      }
+
+      // Listen for new note notifications from other pages
+      if ('BroadcastChannel' in window) {
+        const channel = new BroadcastChannel('notes_channel');
+        channel.addEventListener('message', (event) => {
+          if (event.data && event.data.type === 'new_note') {
+            updateStatistics();
+            reloadNotes();
+          }
+        });
+      }
+    </script>
     <script src="/static/js/script.js"></script>
 </body>
 </html>

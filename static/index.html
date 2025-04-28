@@ -51,7 +51,7 @@
 
       <div id="noteModal" class="modal hidden">
         <div class="box">
-          <form class="modal-content" method="POST" action="/submit" enctype="multipart/form-data">
+          <form id="noteForm" class="modal-content" method="POST" action="/submit" enctype="multipart/form-data">
             <h2>Keluhan Baru</h2>
 <div style="position: relative; display: inline-block; width: 100%;">
   <input type="text" id="title-input" name="title" placeholder="Title" required maxlength="30" style="width: 100%; box-sizing: border-box;">
@@ -201,10 +201,52 @@
 
   // Call loadNotes() pas halaman dimuat
   window.addEventListener("DOMContentLoaded", loadNotes);
+
+  // Add form submit event listener with debug logs and BroadcastChannel notification
+  const noteForm = document.getElementById('noteForm');
+  if (noteForm) {
+    noteForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      console.log('Submitting new note...');
+      const formData = new FormData(noteForm);
+      try {
+        const response = await fetch(noteForm.action, {
+          method: noteForm.method,
+          body: formData
+        });
+        console.log('Fetch response received:', response);
+
+        if (response.ok) {
+          console.log('Note submitted successfully.');
+          // Close modal
+          document.getElementById('noteModal').classList.add('hidden');
+          // Reset form
+          noteForm.reset();
+          // Reload notes list
+          loadNotes();
+
+          // Notify admin page about new note
+          if ('BroadcastChannel' in window) {
+            console.log('Posting new_note message to BroadcastChannel.');
+            const channel = new BroadcastChannel('notes_channel');
+            channel.postMessage({ type: 'new_note' });
+            channel.close();
+          }
+        } else {
+          console.warn('Failed to submit note, response not ok.');
+          alert('Failed to submit note');
+        }
+      } catch (error) {
+        console.error('Error submitting note:', error);
+        alert('Failed to submit note');
+      }
+    });
+  }
 </script>
 <script>
   const contentTextarea = document.getElementById('content-textarea');
-  const charCount = document.getElementById('char-count');
+  const charCount = document.getElementById('content-char-count');
   const maxLength = contentTextarea.getAttribute('maxlength');
 
   function updateCharCount() {
