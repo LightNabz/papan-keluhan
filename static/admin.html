@@ -177,6 +177,7 @@
                     <li>Menunggu Respon: <span id="count-menunggu">{{ status_counts["Menunggu Respon"] }}</span></li>
                     <li>Sedang diproses: <span id="count-sedang">{{ status_counts["Sedang diproses"] }}</span></li>
                     <li>Telah ditindaklanjuti: <span id="count-telah">{{ status_counts["Telah ditindaklanjuti"] }}</span></li>
+                    <li>Ditolak: <span id="count-tolak">{{ status_counts["Ditolak"] }}</span></li>
                 </ul>
             </div>
 
@@ -202,6 +203,7 @@
                                 <option value="Menunggu Respon" {% if note.status == "Menunggu Respon" %}selected{% endif %}>Menunggu Respon</option>
                                 <option value="Sedang diproses" {% if note.status == "Sedang diproses" %}selected{% endif %}>Sedang diproses</option>
                                 <option value="Telah ditindaklanjuti" {% if note.status == "Telah ditindaklanjuti" %}selected{% endif %}>Telah ditindaklanjuti</option>
+                                <option value="Ditolak" {% if note.status == "Ditolak" %}selected{% endif %}>Ditolak</option>
                             </select>
                         </p>
                     </div>
@@ -350,6 +352,10 @@
                 const telahEl = document.getElementById('count-telah');
                 const telahCurrent = parseInt(telahEl.textContent) || 0;
                 animateCount(telahEl, telahCurrent, data.status_counts["Telah ditindaklanjuti"], 1000);
+
+                const tolakEl = document.getElementById('count-tolak');
+                const tolakCurrent = parseInt(tolakEl.textContent) || 0;
+                animateCount(tolakEl, tolakCurrent, data.status_counts["Ditolak"], 1000);
 
             } catch (error) {
                 console.error('Failed to update statistics:', error);

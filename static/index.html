@@ -53,9 +53,18 @@
         <div class="box">
           <form class="modal-content" method="POST" action="/submit" enctype="multipart/form-data">
             <h2>Keluhan Baru</h2>
-            <input type="text" name="title" placeholder="Title" required>
-            <textarea name="content" placeholder="Content" rows="4" required></textarea>
-            <input type="text" name="name" placeholder="Name (default: Anon)">
+<div style="position: relative; display: inline-block; width: 100%;">
+  <input type="text" id="title-input" name="title" placeholder="Title" required maxlength="30" style="width: 100%; box-sizing: border-box;">
+  <div id="title-char-count" style="position: absolute; right: 10px; bottom: 30px; font-size: 0.8em; color: #666;">30</div>
+</div>
+<div style="position: relative; display: inline-block; width: 100%; margin-top: 8px;">
+  <textarea id="content-textarea" name="content" placeholder="Content" rows="4" required maxlength="300" style="width: 100%; box-sizing: border-box;"></textarea>
+  <div id="content-char-count" style="position: absolute; right: 10px; bottom: 24px; font-size: 0.8em; color: #666;">300</div>
+</div>
+<div style="position: relative; display: inline-block; width: 100%; margin-top: 8px;">
+  <input type="text" id="name-input" name="name" placeholder="Name (default: Anon)" maxlength="15" style="width: 100%; box-sizing: border-box;">
+  <div id="name-char-count" style="position: absolute; right: 10px; bottom: 30px; font-size: 0.8em; color: #666;">15</div>
+</div>
 
             <select name="jenis_keluhan" id="jenis_keluhan" required>
               <option value="" disabled selected>Pilih jenis keluhan</option>
@@ -192,7 +201,60 @@
 
   // Call loadNotes() pas halaman dimuat
   window.addEventListener("DOMContentLoaded", loadNotes);
-  </script>
+</script>
+<script>
+  const contentTextarea = document.getElementById('content-textarea');
+  const charCount = document.getElementById('char-count');
+  const maxLength = contentTextarea.getAttribute('maxlength');
+
+  function updateCharCount() {
+    const remaining = maxLength - contentTextarea.value.length;
+    charCount.textContent = remaining;
+  }
+
+  contentTextarea.addEventListener('input', updateCharCount);
+
+  // Initialize count on page load
+  updateCharCount();
+</script>
+<script>
+  function setupCharCount(inputId, countId) {
+    const input = document.getElementById(inputId);
+    const count = document.getElementById(countId);
+    const maxLength = input.getAttribute('maxlength');
+
+    function updateCount() {
+      const remaining = maxLength - input.value.length;
+      count.textContent = remaining;
+    }
+
+    input.addEventListener('input', updateCount);
+    updateCount();
+  }
+
+  setupCharCount('title-input', 'title-char-count');
+  setupCharCount('content-textarea', 'content-char-count');
+  setupCharCount('name-input', 'name-char-count');
+</script>
+<script>
+  function setupCharCount(inputId, countId) {
+    const input = document.getElementById(inputId);
+    const count = document.getElementById(countId);
+    const maxLength = input.getAttribute('maxlength');
+
+    function updateCount() {
+      const remaining = maxLength - input.value.length;
+      count.textContent = remaining;
+    }
+
+    input.addEventListener('input', updateCount);
+    updateCount();
+  }
+
+  setupCharCount('title-input', 'title-char-count');
+  setupCharCount('content-textarea', 'content-char-count');
+  setupCharCount('name-input', 'name-char-count');
+</script>
 <script src="/static/js/script.js"></script>
 </body>
 </html>

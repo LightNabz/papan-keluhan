@@ -101,7 +101,8 @@ async def admin_dashboard(request: Request):
     status_counts = {
         "Sedang diproses": 0,
         "Menunggu Respon": 0,
-        "Telah ditindaklanjuti": 0
+        "Telah ditindaklanjuti": 0,
+        "Ditolak": 0
     }
 
     for note in notes:
@@ -143,7 +144,8 @@ async def admin_statistics(request: Request):
     status_counts = {
         "Sedang diproses": 0,
         "Menunggu Respon": 0,
-        "Telah ditindaklanjuti": 0
+        "Telah ditindaklanjuti": 0,
+        "Ditolak": 0
     }
 
     for note in notes:
