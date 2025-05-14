@@ -491,3 +491,7 @@ async def index(request: Request):
         "request": request,
         "notes": notes
     })
+
+@app.get("/keluhan", response_class=HTMLResponse)
+async def keluhan(request: Request):
+    return templates.TemplateResponse("main/index.html", {"request": request})

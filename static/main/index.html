@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Papan Keluhan Siswa</title>
+  <link rel="stylesheet" id="theme-style" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/global.css">
+  <link rel="stylesheet" href="/static/css/animations.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav>
+    <div class="logo">Papan Keluhan</div>
+    <div class="hamburger" onclick="toggleMenu()">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <ul id="nav-links">
+        <li><a href="#beranda">Tambah Keluhan</a></li>
+        <li><a href="/">Tentang</a></li>
+        <li><a href="https://lightnabz.vercel.app/#contact">Contact</a></li>
+        <li><a href="/admin">Dashboard</a></li>
+        <li>
+          <button id="toggle-theme" class="theme-toggle-btn">
+              <span id="moon-icon" class="hidden">
+                  <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                  </svg>
+              </span>
+              <span id="sun-icon">
+                  <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"/>
+                  </svg>
+              </span>
+          </button>
+      </li>
+      <a href="https://github.com/LightNabz" class="github-link">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.11.793-.26.793-.577 0-.285-.01-1.04-.015-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.757-1.333-1.757-1.089-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.807 1.305 3.495.998.108-.775.419-1.305.762-1.605-2.665-.306-5.466-1.332-5.466-5.93 0-1.31.468-2.38 1.235-3.22-.123-.304-.535-1.524.117-3.176 0 0 1.007-.322 3.301 1.23a11.52 11.52 0 013.004-.404c1.02.004 2.047.137 3.003.403 2.292-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.873.12 3.177.77.84 1.232 1.91 1.232 3.22 0 4.609-2.805 5.619-5.475 5.92.429.37.823 1.103.823 2.222 0 1.605-.014 2.896-.014 3.287 0 .32.19.694.8.576 4.765-1.592 8.2-6.09 8.2-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+      </a>
+    </ul>
+</nav>
+
+  <div class="hero" id="beranda">
+    <div class="container">
+      <button id="openModal" class="btn-transparent">+ Tambah Keluhan</button>
+
+      <div id="noteModal" class="modal hidden">
+        <div class="box">
+          <form id="noteForm" class="modal-content" method="POST" action="/submit" enctype="multipart/form-data">
+            <h2>Keluhan Baru</h2>
+<div style="position: relative; display: inline-block; width: 100%;">
+  <input type="text" id="title-input" name="title" placeholder="Title" required maxlength="30" style="width: 100%; box-sizing: border-box;">
+  <div id="title-char-count" style="position: absolute; right: 10px; bottom: 30px; font-size: 0.8em; color: #666;">30</div>
+</div>
+<div style="position: relative; display: inline-block; width: 100%; margin-top: 8px;">
+  <textarea id="content-textarea" name="content" placeholder="Content" rows="4" required maxlength="300" style="width: 100%; box-sizing: border-box;"></textarea>
+  <div id="content-char-count" style="position: absolute; right: 10px; bottom: 25px; font-size: 0.8em; color: #666;">300</div>
+</div>
+<div style="position: relative; display: inline-block; width: 100%; margin-top: 8px;">
+  <input type="text" id="name-input" name="name" placeholder="Name (default: Anon)" maxlength="15" style="width: 100%; box-sizing: border-box;">
+  <div id="name-char-count" style="position: absolute; right: 10px; bottom: 30px; font-size: 0.8em; color: #666;">15</div>
+</div>
+
+            <select name="jenis_keluhan" id="jenis_keluhan" required>
+              <option value="" disabled selected>Pilih jenis keluhan</option>
+              <option value="Perundungan">Perundungan</option>
+              <option value="Sarana/prasarana">Sarana/prasarana</option>
+              <option value="Saran">Saran</option>
+            </select>
+            
+            <!-- Drag-and-drop area for image -->
+            <div id="imageDropArea" class="drag-drop-area">
+              <p id="imageDropText">Drag & drop an image here, or click to select a file (limit 5 MB)</p>
+              <input type="file" id="imageInput" name="image" accept="image/*" hidden>
+              <div id="imagePreview" class="image-preview hidden">
+                <img id="previewImage" src="" alt="Image preview">
+                <button type="button" id="removeImage" class="btn-transparent">❌</button>
+              </div>
+            </div>
+
+            <div class="modal-buttons">
+              <button type="submit" class="btn-modal">📤 Post</button>
+              <button type="button" id="cancelModal" class="btn-modal">❌ Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-list">
+      {% for note in notes %}
+        <div class="note box">
+          <div class="note-header">
+            <p class="note-author">Oleh: {{ note.name or "Anon" }}</p>
+            <h3 class="note-title">{{ note.title }}</h3>
+          </div>
+          <div class="note-body">
+            <p class="note-content">{{ note.content }}</p>
+            {% if note.image_url %}
+              <div class="note-image">
+                <img src="{{ note.image_url }}" alt="">
+              </div>
+            {% endif %}
+            <p class="note-category">{{ note.jenis_keluhan }}</p>
+            <p class="note-status"><strong>Status:</strong> {{ note.status or "Menunggu Respon" }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>    
+  </div>
+  <footer>
+    <p>&copy; 2025 Papan Keluhan Siswa | This is FOSS, feel free to use! | Made by Nabz</p>
+  <script>
+    const modal = document.getElementById('noteModal');
+    const openModalButton = document.getElementById('openModal');
+    const cancelModalButton = document.getElementById('cancelModal');
+    const imageDropArea = document.getElementById('imageDropArea');
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImage = document.getElementById('previewImage');
+    const removeImageButton = document.getElementById('removeImage');
+    const imageDropText = document.getElementById('imageDropText');
+
+    openModalButton.onclick = () => modal.classList.remove('hidden');
+    cancelModalButton.onclick = () => modal.classList.add('hidden');
+
+    // Drag-and-drop functionality
+    imageDropArea.addEventListener('click', () => imageInput.click());
+
+    imageDropArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      imageDropArea.classList.add('drag-over');
+    });
+
+    imageDropArea.addEventListener('dragleave', () => {
+      imageDropArea.classList.remove('drag-over');
+    });
+
+    imageDropArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      imageDropArea.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        displayImagePreview(file);
+      }
+    });
+
+    imageInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        displayImagePreview(file);
+      }
+    });
+
+    removeImageButton.addEventListener('click', () => {
+      imageInput.value = ''; // Clear the file input
+      imagePreview.classList.add('hidden');
+      imageDropText.classList.remove('hidden');
+    });
+
+    function displayImagePreview(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImage.src = e.target.result;
+        imagePreview.classList.remove('hidden');
+        imageDropText.classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+  </script>
+  <script>
+    async function loadNotes() {
+    const res = await fetch("/notes");
+    const notes = await res.json();
+    const container = document.querySelector(".note-list");
+    container.innerHTML = "";
+
+    notes.forEach(note => {
+      const noteDiv = document.createElement("div");
+      noteDiv.className = "note box";
+      noteDiv.innerHTML = `
+        <div class="note-header">
+          <h3 class="note-title">${note.title}</h3>
+          <p class="note-author">Oleh: ${note.name || "Anon"}</p>
+        </div>
+        <div class="note-body">
+          <p class="note-content">${note.content}</p>
+          ${note.image_url ? `<div class="note-image"><img src="${note.image_url}" alt="No image attached"></div>` : ""}
+          <p class="note-category">${note.jenis_keluhan}</p>
+          <p class="note-status"><strong>Status:</strong> ${note.status || "Menunggu Respon"}</p>
+        </div>
+      `;
+      container.appendChild(noteDiv);
+    });
+  }
+
+  // Call loadNotes() pas halaman dimuat
+  window.addEventListener("DOMContentLoaded", loadNotes);
+
+  // Add form submit event listener with debug logs and BroadcastChannel notification
+  const noteForm = document.getElementById('noteForm');
+  if (noteForm) {
+    noteForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      console.log('Submitting new note...');
+      const formData = new FormData(noteForm);
+      try {
+        const response = await fetch(noteForm.action, {
+          method: noteForm.method,
+          body: formData
+        });
+        console.log('Fetch response received:', response);
+
+        if (response.ok) {
+          console.log('Note submitted successfully.');
+          // Close modal
+          document.getElementById('noteModal').classList.add('hidden');
+          // Reset form
+          noteForm.reset();
+          // Reload notes list
+          loadNotes();
+
+          // Notify admin page about new note
+          if ('BroadcastChannel' in window) {
+            console.log('Posting new_note message to BroadcastChannel.');
+            const channel = new BroadcastChannel('notes_channel');
+            channel.postMessage({ type: 'new_note' });
+            channel.close();
+          }
+        } else {
+          console.warn('Failed to submit note, response not ok.');
+          alert('Failed to submit note');
+        }
+      } catch (error) {
+        console.error('Error submitting note:', error);
+        alert('Failed to submit note');
+      }
+    });
+  }
+</script>
+<script>
+  const contentTextarea = document.getElementById('content-textarea');
+  const charCount = document.getElementById('content-char-count');
+  const maxLength = contentTextarea.getAttribute('maxlength');
+
+  function updateCharCount() {
+    const remaining = maxLength - contentTextarea.value.length;
+    charCount.textContent = remaining;
+  }
+
+  contentTextarea.addEventListener('input', updateCharCount);
+
+  // Initialize count on page load
+  updateCharCount();
+</script>
+<script>
+  function setupCharCount(inputId, countId) {
+    const input = document.getElementById(inputId);
+    const count = document.getElementById(countId);
+    const maxLength = input.getAttribute('maxlength');
+
+    function updateCount() {
+      const remaining = maxLength - input.value.length;
+      count.textContent = remaining;
+    }
+
+    input.addEventListener('input', updateCount);
+    updateCount();
+  }
+
+  setupCharCount('title-input', 'title-char-count');
+  setupCharCount('content-textarea', 'content-char-count');
+  setupCharCount('name-input', 'name-char-count');
+</script>
+<script>
+  function setupCharCount(inputId, countId) {
+    const input = document.getElementById(inputId);
+    const count = document.getElementById(countId);
+    const maxLength = input.getAttribute('maxlength');
+
+    function updateCount() {
+      const remaining = maxLength - input.value.length;
+      count.textContent = remaining;
+    }
+
+    input.addEventListener('input', updateCount);
+    updateCount();
+  }
+
+  setupCharCount('title-input', 'title-char-count');
+  setupCharCount('content-textarea', 'content-char-count');
+  setupCharCount('name-input', 'name-char-count');
+</script>
+<script src="/static/js/script.js"></script>
+</body>
+</html>

@@ -1,6 +1,26 @@
 .sambut {
     white-space: normal;
-    display: inline-block;
+    display: block;
     word-wrap: break-word;
     text-align: center;
+}
+
+.typed-cursor {
+    display: inline-block;
+    vertical-align: bottom;
+    animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+.hero h1 {
+    white-space: normal !important;
+    overflow: visible !important;
 }
